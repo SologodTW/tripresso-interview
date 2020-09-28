@@ -1,8 +1,47 @@
+import React, { useState, useEffect } from 'react';
 import Head from 'next/head'
 import styles from '../styles/Home.module.css'
+import axios from 'axios';
 
+const ListItem = (props) =>{
+console.log("ListItem -> props", props)
+return (
+  <div className="box">
+  <h2>{props.title}</h2>
+<p>{props.agencyy}</p>
+</div>
+)
+}
 export default function Home() {
+
+  const [mainData, setMainData] = useState([]);
+
+ const getMainData = (sortType) =>{
+ 
+  axios.get(`http://interview.tripresso.com/tour/search?page=1&row_per_page=5&sort=${sortType}`)
+  .then(function (response) {
+    if(response.data.status ==="success"){
+      setMainData(response.data.data.tour_list)
+    }
+  })
+  .catch(function (error) {
+    // handle error
+    console.log('ERRORRRR', error);
+  })
+
+ }
+  useEffect(() => {    
+    getMainData('rating_desc');
+  },[]);
+  
+
+  useEffect(() => {     
+    console.log("Home -> mainData", mainData)
+  },[mainData]);
+
+
   return (
+    <>
     <div className={styles.container}>
       <Head>
         <title>Create Next App</title>
@@ -10,46 +49,23 @@ export default function Home() {
       </Head>
 
       <main className={styles.main}>
+        
         <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
+        tripresso
         </h1>
 
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.js</code>
-        </p>
-
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className={styles.card}
-          >
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/import?filter=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h3>Deploy &rarr;</h3>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div>
+      <div className="main-content">
+          {mainData.map((item) => 
+          <ListItem 
+          title={item.title} 
+          agencyy={item.agency}
+          />
+          )}
+          </div>
+        <button className="button1" onClick={()=> getMainData('rating_desc', '200')}>Rating</button>
+        <button className="button1" onClick={()=> getMainData('price_desc', '100')}>Price </button>
       </main>
-
+      
       <footer className={styles.footer}>
         <a
           href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
@@ -61,5 +77,11 @@ export default function Home() {
         </a>
       </footer>
     </div>
+      <style jsx>{`
+      .button1{
+        font-size:48px;
+      }
+    `}</style>
+    </>
   )
 }
