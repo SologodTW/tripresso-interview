@@ -3,19 +3,20 @@ import Head from 'next/head';
 import axios from 'axios';
 import styles from '../styles/Home.module.css';
 
-export const ListItem = (props) => {
-  console.log('ListItem -> props', props);
-  return (
-    <div className="box">
-      <h2>{props.title}</h2>
-      <p>{props.agency}</p>
-    </div>
-  );
-};
+//
+export const ListItem = (props) => (
+  <div className="box">
+    <h2>{props.title}</h2>
+    <p>{props.agency}</p>
+  </div>
+);
 const MyComponent = (props) => (<div id={props.id} />);
 
+// create page view
 export default function Home() {
+  // data ----- callback function = switching between state (pricing and rating)
   const [mainData, setMainData] = useState([]);
+  // retrieve data api
   const getMainData = (sortType) => {
     axios.get(`http://interview.tripresso.com/tour/search?page=1&row_per_page=5&sort=${sortType}`)
       .then((response) => {
@@ -25,9 +26,10 @@ export default function Home() {
       })
       .catch((error) => {
         // handle error
-        console.log('ERRORRRR', error);
+        console.log(error);
       });
   };
+
   useEffect(() => {
     getMainData('rating_desc');
   }, []);
@@ -40,7 +42,7 @@ export default function Home() {
     <>
       <div className={styles.container}>
         <Head>
-          <title>Create Next App</title>
+          <title>Tripresso Search Results</title>
           <link rel="icon" href="/favicon.ico" />
         </Head>
 
@@ -49,7 +51,10 @@ export default function Home() {
           <h1 className={styles.title}>
             tripresso
           </h1>
-
+          <div className="nav">
+            <button className="button1" type="submit" onClick={() => getMainData('rating_desc', '200')}>Rating</button>
+            <button className="button1" type="submit" onClick={() => getMainData('price_desc', '100')}>Price </button>
+          </div>
           <div className="main-content">
             {mainData.map((item) => (
               <ListItem
@@ -58,21 +63,7 @@ export default function Home() {
               />
             ))}
           </div>
-          <button className="button1" onClick={() => getMainData('rating_desc', '200')}>Rating</button>
-          <button className="button1" onClick={() => getMainData('price_desc', '100')}>Price </button>
         </main>
-
-        <footer className={styles.footer}>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Powered by
-            {' '}
-            <img src="/vercel.svg" alt="Vercel Logo" className={styles.logo} />
-          </a>
-        </footer>
       </div>
       <style jsx>
         {`
