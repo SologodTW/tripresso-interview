@@ -1,76 +1,160 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import axios from 'axios';
+import clsx from 'clsx';
 import styles from '../styles/Home.module.css';
-
-//
-export const ListItem = (props) => (
-  <div className="box">
-    <h2>{props.title}</h2>
-    <p>{props.agency}</p>
-  </div>
-);
-const MyComponent = (props) => (<div id={props.id} />);
+import ListItem from './components/ListItem';
 
 // create page view
 export default function Home() {
   // data ----- callback function = switching between state (pricing and rating)
   const [mainData, setMainData] = useState([]);
-  // retrieve data api
-  const getMainData = (sortType) => {
-    axios.get(`http://interview.tripresso.com/tour/search?page=1&row_per_page=5&sort=${sortType}`)
+  const [dropdownIsOpen, setDropdownIsOpen] = useState(false);
+  const [listSortType, setListSortType] = useState();
+  const [priceType, setPriceType] = useState('價格');
+
+  // retrieve data from API
+  const getNextPageMainData = (pageNum) => {
+    axios.get(`http://interview.tripresso.com/tour/search?page=${pageNum}&row_per_page=10&sort=${listSortType}`)
       .then((response) => {
         if (response.data.status === 'success') {
           setMainData(response.data.data.tour_list);
         }
       })
       .catch((error) => {
-        // handle error
-        console.log(error);
+        error();
+      });
+  };
+
+  const getMainData = () => {
+    axios.get(`http://interview.tripresso.com/tour/search?page=1&row_per_page=10&sort=${listSortType}`)
+      .then((response) => {
+        if (response.data.status === 'success') {
+          setMainData(response.data.data.tour_list);
+        }
+      })
+      .catch((error) => {
+        error();
       });
   };
 
   useEffect(() => {
-    getMainData('rating_desc');
+    getMainData(listSortType);
   }, []);
 
-  useEffect(() => {
-    console.log('Home -> mainData', mainData);
-  }, [mainData]);
+  // scroll to top when select pricing
+  const onClickNextPageMainData = (pageNum) => {
+    getNextPageMainData(pageNum);
+    window.scrollTo(0, 0);
+  };
+
+  // pricing dropdown function
+  const openDropdown = () => {
+    setDropdownIsOpen(!dropdownIsOpen);
+  };
+
+  // Get data when click on rating sort
+  const onClickGetMainData = (sortType) => {
+    if (dropdownIsOpen === true) {
+      setDropdownIsOpen(false);
+    }
+    setListSortType(sortType);
+    getMainData(sortType);
+  };
+  // Get data when click on pricing sort
+  const onClickGetPriceData = (sortType) => {
+    setListSortType(sortType);
+    setPriceType(sortType === 'price_desc' ? '價格高到低' : '價格低到高');
+    getMainData(sortType);
+    setDropdownIsOpen(false);
+  };
 
   return (
     <>
       <div className={styles.container}>
         <Head>
           <title>Tripresso Search Results</title>
-          <link rel="icon" href="/favicon.ico" />
         </Head>
 
         <main className={styles.main}>
 
-          <h1 className={styles.title}>
-            tripresso
-          </h1>
-          <div className="nav">
-            <button className="button1" type="submit" onClick={() => getMainData('rating_desc', '200')}>Rating</button>
-            <button className="button1" type="submit" onClick={() => getMainData('price_desc', '100')}>Price </button>
+          <div className={styles.title}>
+            <h1>tripresso 旅遊咖</h1>
           </div>
-          <div className="main-content">
-            {mainData.map((item) => (
+
+          <div className={styles.nav}>
+            <p className={styles.navTitle}>排序方式</p>
+            <ul className={styles.buttonGroup}>
+              <li
+                className={styles.button}
+                onClick={() => onClickGetMainData('rating_desc')}
+              >
+                <div className={styles.buttonName}>精選評分</div>
+              </li>
+              <li className={styles.button}>
+                <div className={styles.buttonName} onClick={() => openDropdown()}>
+                  {priceType}
+                  {' '}
+                  <>&#9662;</>
+                </div>
+
+                <ul className={clsx(styles.dropdown, { isOpen: dropdownIsOpen })}>
+                  <li
+                    className={styles.dropdownItem}
+                    onClick={() => onClickGetPriceData('price_asc')}
+                  >
+                    價格：低到高
+
+                  </li>
+                  <li
+                    className={styles.dropdownItem}
+                    onClick={() => onClickGetPriceData('price_desc')}
+                  >
+                    價格：高到低
+
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+          <div className={styles.main}>
+            {mainData ? mainData.map((item) => (
               <ListItem
                 title={item.title}
+                rating={item.rating}
                 agency={item.agency}
+                tourDays={item.tour_days}
+                minPrice={item.min_price}
+                tags={item.tags}
+                group={item.group}
+                image={item.image_url}
+                tourDetail={item.tour_detail_url}
               />
-            ))}
+            ))
+              : <div>...Loading</div>}
           </div>
+
+          <ul className={styles.pagination}>
+            <li className={styles.pageNum} onClick={() => onClickNextPageMainData(1)}>1</li>
+            <li className={styles.pageNum} onClick={() => onClickNextPageMainData(2)}>2</li>
+            <li className={styles.pageNum} onClick={() => onClickNextPageMainData(3)}>3</li>
+            <li className={styles.pageNum} onClick={() => onClickNextPageMainData(3)}>4</li>
+          </ul>
         </main>
       </div>
+
       <style jsx>
         {`
-      .button1 {
-        font-size:48px;
-      }
-    `}
+          .isOpen {
+            opacity: 1;
+            pointer-events: auto;
+          }
+        
+
+      `}
       </style>
     </>
   );
