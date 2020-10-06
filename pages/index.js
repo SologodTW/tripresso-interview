@@ -1,3 +1,4 @@
+/* eslint-disable quotes */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
@@ -62,6 +63,8 @@ export default function Home() {
       setDropdownIsOpen(false);
     }
     setListSortType(sortType);
+    console.log("onClickGetMainData -> setListSortType(sortType);", setListSortType(sortType));
+
     getMainData(sortType);
   };
   // Get data when click on pricing sort
@@ -120,22 +123,20 @@ export default function Home() {
               </li>
             </ul>
           </div>
-          <div className={styles.main}>
-            {mainData ? mainData.map((item) => (
-              <ListItem
-                title={item.title}
-                rating={item.rating}
-                agency={item.agency}
-                tourDays={item.tour_days}
-                minPrice={item.min_price}
-                tags={item.tags}
-                group={item.group}
-                image={item.image_url}
-                tourDetail={item.tour_detail_url}
-              />
-            ))
-              : <div>...Loading</div>}
-          </div>
+          {mainData ? mainData.map((item) => (
+            <ListItem
+              title={item.title}
+              rating={item.rating}
+              agency={item.agency}
+              tourDays={item.tour_days}
+              minPrice={item.min_price}
+              tags={item.tags}
+              group={item.group}
+              image={item.image_url}
+              tourDetail={item.tour_detail_url}
+            />
+          ))
+            : <div>...Loading</div>}
 
           <ul className={styles.pagination}>
             <li className={styles.pageNum} onClick={() => onClickNextPageMainData(1)}>1</li>
