@@ -149,6 +149,7 @@ export default function Home() {
 
       <style jsx>
         {`
+          
           .isOpen {
             opacity: 1;
             pointer-events: auto;

@@ -8,7 +8,9 @@ const ListItem = (props) => {
   return (
     <div className={styles.boxContainer}>
       <div className={styles.box}>
-        <div className={styles.boxImgContainer}><img className={styles.boxImg} src={props.image} alt="destination" /></div>
+        <div className={styles.boxImgContainer}>
+          <img className={styles.boxImg} src={props.image} alt="destination" />
+        </div>
         <div className={styles.boxInfo}>
           <div className={styles.agencyRating}>
             <p>

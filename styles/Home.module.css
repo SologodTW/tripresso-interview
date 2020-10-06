@@ -1,3 +1,4 @@
+/* Header Styles */
 .container {
   min-height: 100vh;
 }
@@ -96,6 +97,7 @@
 }
 
 /* Search Result Box */
+
 .boxContainer {
   margin-top: 2em;
   width: 100%;
@@ -114,7 +116,7 @@
 }
 
 .box:hover {
-  box-shadow: 1px 4px 10px darkgray;
+  box-shadow: 10px 10px 15px darkgray;
 }
 
 .box:hover .boxImg {
@@ -147,6 +149,10 @@
 
 .agencyRating {
   display: flex;
+}
+
+.boxTitle {
+  font-weight: bold;
 }
 
 .boxTitle:hover {
