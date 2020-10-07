@@ -4,7 +4,6 @@ import React from 'react';
 import styles from '../../styles/Home.module.css';
 
 const ListItem = (props) => {
-  console.log('ListItem -> props', props);
   return (
     <div className={styles.boxContainer}>
       <div className={styles.box}>

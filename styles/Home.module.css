@@ -1,4 +1,4 @@
-/* Header Styles */
+/* General Style */
 .container {
   min-height: 100vh;
 }
@@ -7,6 +7,8 @@
   display: flex;
   flex-direction: column;
 }
+
+/* Header Styles */
 
 .title {
   display: flex;
